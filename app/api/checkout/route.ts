@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import {Stripe} from "stripe";
+import { Stripe } from "stripe";
 
-export const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY!, {
+// Initialize Stripe without exporting it
+const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY!, {
   typescript: true, 
 });
 
@@ -20,7 +21,10 @@ export async function POST(req: NextRequest) {
     const { cartItems, customer } = await req.json();
 
     if (!cartItems || !customer) {
-      return new NextResponse("Not enough data to checkout", { status: 400 });
+      return new NextResponse("Not enough data to checkout", { 
+        status: 400,
+        headers: corsHeaders
+      });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -49,13 +53,18 @@ export async function POST(req: NextRequest) {
         quantity: cartItem.quantity,
       })),
       client_reference_id: customer.clerkId,
-      success_url: `${process.env.ECOMMERCE_SRTORE_URL}/payment_success`,
-      cancel_url: `${process.env.ECOMMERCE_SRTORE_URL}/cart`,
+      success_url: `${process.env.ECOMMERCE_STORE_URL}/payment_success`,
+      cancel_url: `${process.env.ECOMMERCE_STORE_URL}/cart`,
     });
 
-    return NextResponse.json(session, { headers: corsHeaders });
+    return NextResponse.json(session, { 
+      headers: corsHeaders 
+    });
   } catch (err) {
     console.log("[checkout_POST]", err);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return new NextResponse("Internal Server Error", { 
+      status: 500,
+      headers: corsHeaders
+    });
   }
 }
