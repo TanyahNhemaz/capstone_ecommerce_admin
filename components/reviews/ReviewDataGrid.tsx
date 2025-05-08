@@ -314,7 +314,7 @@ export default function ReviewDataGrid() {
                             <div className="pt-2 border-t">
                               <h5 className="text-sm font-medium">Suggested Reply</h5>
                               <p className="text-sm mt-1 italic text-gray-600">
-                                "Thank you for your {review.rating >= 4 ? 'positive' : 'constructive'} feedback!"
+                                Thank you for your {review.rating >= 4 ? 'positive' : 'constructive'} feedback!
                               </p>
                               <button className="text-xs text-blue-600 mt-1 hover:underline">
                                 Generate AI Response
